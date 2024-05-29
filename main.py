@@ -1,5 +1,6 @@
-from snapchat import SnapChat
 from time import perf_counter
+
+from snapchat import SnapChat
 
 login = 'lily30mur'
 password = 'Murphy30L'
@@ -17,7 +18,7 @@ def main():
     s = SnapChat(PROXY_HOST, PROXY_PORT, PROXY_USER, PROXY_PASS)
     s.login(login, password, fa_code)
     chats = s.find_id_chats()
-    s.pars_chat(chats, 'Hi how are you?')  # 2 второй параметр сообщение
+    s.send_message_all(chats, 'Hi how are you?')
     finish = perf_counter()
     print('Time:', finish - start)
 

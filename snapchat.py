@@ -1,16 +1,20 @@
+import json
+import os
+import time
+
+import requests
+from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+
 from connect import Connect
-from bs4 import BeautifulSoup
-import os
-import json
-import requests
-import time
 
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Safari/537.36'
 
 
 class SnapChat:
+    """Login SnapChat, Parsing Chats, Send message"""
+
     def __init__(self, host=None, port=None, user=None, password=None):
         connect = Connect(host, port, user, password)
         self.driver = connect.get_chromedriver(use_proxy=True, user_agent=user_agent)
@@ -74,33 +78,21 @@ class SnapChat:
                     json.dump(chats, file, indent=4)
                 return chats
 
-    def pars_chat(self, chats='', send_message=None):
-        chat_folder = "chats"
-        if not os.path.exists(chat_folder):
-            os.makedirs(chat_folder)
+    def send_message_all(self, chats='', send_message=None):
         for id, (index, name) in enumerate(chats.items(), 1):
-            chat_subfolder = os.path.join(chat_folder, name)
-            if not os.path.exists(chat_subfolder):
-                os.makedirs(chat_subfolder)
             url = f'https://web.snapchat.com/{index}'
             self.driver.get(url)
             time.sleep(2)
-            file_name = os.path.join(chat_subfolder, "html")
-            with open(file_name, "w", encoding="utf-8") as file:
-                file.write(self.driver.page_source)
-            if send_message:
-                try:
-                    self.send_message(send_message, url)
-                    print(f'{id}. Повiдомлення користувачу {name} вiдправлено')
-                except:
-                    print(f'Повiдомлення користувачу {name} не вiдправлено')
-                    time.sleep(20)
-                    self.driver.get(url)
-                    time.sleep(2)
-                    with open(file_name, "w", encoding="utf-8") as file:
-                        file.write(self.driver.page_source)
-                    self.send_message(send_message, url)
-                    print(f'{id}. Повiдомлення користувачу {name} вiдправлено')
+            try:
+                self.send_message(send_message, url)
+                print(f'{id}. Повiдомлення користувачу {name} вiдправлено')
+            except:
+                print(f'Повiдомлення користувачу {name} не вiдправлено')
+                time.sleep(20)
+                self.driver.get(url)
+                time.sleep(2)
+                self.send_message(send_message, url)
+                print(f'{id}. Повiдомлення користувачу {name} вiдправлено')
 
     def send_message(self, message, url=None):
         time.sleep(1)

@@ -1,10 +1,12 @@
 import zipfile
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from time import sleep
 
 
 class Connect:
+    """Connect to webdriver add proxy(if we need)"""
+
     def __init__(self, host, port, user, pas):
         self.proxy_host = host
         self.proxy_port = port  # Your proxy port
@@ -59,7 +61,6 @@ class Connect:
         );
         """ % (self.proxy_host, self.proxy_port, self.proxy_user, self.proxy_pas)
 
-
     def get_chromedriver(self, use_proxy=False, user_agent=None, desired_capabilities=None):
         chrome_options = webdriver.ChromeOptions()
         if use_proxy:
@@ -82,5 +83,3 @@ class Connect:
             options=chrome_options,
         )
         return driver
-
-
